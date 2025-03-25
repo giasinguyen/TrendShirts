@@ -1,13 +1,11 @@
-package fit.iuh.demojpa;
+package fit.iuh;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoJpaApplication {
-
+public class TrendShirtsApplication {
     public static void main(String[] args) {
-        SpringApplication.run(DemoJpaApplication.class, args);
+        SpringApplication.run(TrendShirtsApplication.class, args);
     }
-
 }
