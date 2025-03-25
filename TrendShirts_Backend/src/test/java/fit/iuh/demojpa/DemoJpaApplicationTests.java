@@ -1,8 +1,10 @@
+package fit.iuh.demojpa;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class DemoJpaApplicationTests {
 
     @Test
     void contextLoads() {
