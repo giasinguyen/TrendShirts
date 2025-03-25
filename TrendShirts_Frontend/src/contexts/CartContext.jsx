@@ -1,86 +1,91 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-const CartContext = createContext();
+// Create cart context
+const CartContext = createContext(null);
 
+// Hook to use cart context
 export const useCart = () => useContext(CartContext);
 
-export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+export function CartProvider({ children }) {
+  const [cart, setCart] = useState([]);
+  const [itemCount, setItemCount] = useState(0);
+  const [total, setTotal] = useState(0);
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on initial render
   useEffect(() => {
-    const storedCart = localStorage.getItem('cart');
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      const parsedCart = JSON.parse(savedCart);
+      setCart(parsedCart);
     }
-    setLoading(false);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Update localStorage whenever cart changes
   useEffect(() => {
-    if (!loading) {
-      localStorage.setItem('cart', JSON.stringify(cartItems));
-    }
-  }, [cartItems, loading]);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Calculate total items and price
+    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const price = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    
+    setItemCount(count);
+    setTotal(price);
+  }, [cart]);
 
-  const addToCart = (product, quantity = 1) => {
-    setCartItems(prev => {
-      const existingItemIndex = prev.findIndex(item => item.id === product.id);
+  // Add item to cart
+  const addItem = (product, quantity = 1) => {
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.id === product.id);
       
-      if (existingItemIndex > -1) {
-        const updatedItems = [...prev];
-        updatedItems[existingItemIndex].quantity += quantity;
-        return updatedItems;
+      if (existingItem) {
+        // Update quantity if item already exists
+        return prevCart.map(item => 
+          item.id === product.id 
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        // Add new item
+        return [...prevCart, { ...product, quantity }];
       }
-      
-      return [...prev, { ...product, quantity }];
     });
   };
 
-  const removeFromCart = (productId) => {
-    setCartItems(prev => prev.filter(item => item.id !== productId));
+  // Remove item from cart
+  const removeItem = (productId) => {
+    setCart(prevCart => prevCart.filter(item => item.id !== productId));
   };
 
+  // Update item quantity
   const updateQuantity = (productId, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeItem(productId);
       return;
     }
     
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === productId ? { ...item, quantity } : item
+    setCart(prevCart => 
+      prevCart.map(item => 
+        item.id === productId 
+          ? { ...item, quantity }
+          : item
       )
     );
   };
 
+  // Clear the entire cart
   const clearCart = () => {
-    setCartItems([]);
-  };
-
-  const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
-
-  const getCartItemsCount = () => {
-    return cartItems.reduce((count, item) => count + item.quantity, 0);
+    setCart([]);
   };
 
   const value = {
-    cartItems,
-    loading,
-    addToCart,
-    removeFromCart,
+    cart,
+    itemCount,
+    total,
+    addItem,
+    removeItem,
     updateQuantity,
-    clearCart,
-    getCartTotal,
-    getCartItemsCount
+    clearCart
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {!loading && children}
-    </CartContext.Provider>
-  );
-};
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+}

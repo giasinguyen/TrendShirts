@@ -1,15 +1,20 @@
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Hero } from '../components/home/Hero';
+import { FeaturedProducts } from '../components/home/FeaturedProducts';
+import { NewArrivals } from '../components/home/NewArrivals';
+import { BrandStory } from '../components/home/BrandStory';
+import { InstagramFeed } from '../components/home/InstagramFeed';
+import { Newsletter } from '../components/home/Newsletter';
 
-function Home() {
+export const Home = () => {
   return (
-    <div className="container-custom py-12">
-      <h1 className="text-3xl font-bold mb-6">Welcome to ShirtStore</h1>
-      <p className="mb-8">Your one-stop shop for quality apparel and accessories.</p>
-      <Link to="/products" className="btn-primary">
-        Browse Products
-      </Link>
-    </div>
+    <main>
+      <Hero />
+      <NewArrivals />
+      <FeaturedProducts />
+      <BrandStory />
+      <InstagramFeed />
+      <Newsletter />
+    </main>
   );
-}
-
-export default Home;
+};

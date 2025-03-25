@@ -1,59 +1,61 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 
-const AuthContext = createContext();
+// Create the auth context
+const AuthContext = createContext(null);
 
+// Hook for child components to get the auth object
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+// Provider component that wraps your app and makes auth object available to any
+// child component that calls useAuth().
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  // Check local storage for user on app load
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser));
+  // Login function
+  const login = async (email, password) => {
+    setLoading(true);
+    try {
+      // This would normally be an API call to your backend
+      // For demo purposes, we'll just simulate a successful login
+      const userData = { id: 1, name: 'User', email };
+      setUser(userData);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
-
-  // Mock login function
-  const login = (email, password) => {
-    // In a real app, this would call an API
-    const user = { id: 1, email, name: 'Test User' };
-    setCurrentUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
-    return Promise.resolve(user);
   };
 
   // Logout function
   const logout = () => {
-    setCurrentUser(null);
-    localStorage.removeItem('user');
-    return Promise.resolve();
+    setUser(null);
   };
 
   // Register function
-  const register = (email, password, name) => {
-    // In a real app, this would call an API
-    const user = { id: Date.now(), email, name };
-    setCurrentUser(user);
-    localStorage.setItem('user', JSON.stringify(user));
-    return Promise.resolve(user);
+  const register = async (name, email, password) => {
+    setLoading(true);
+    try {
+      // This would normally be an API call to your backend
+      const userData = { id: 1, name, email };
+      setUser(userData);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const value = {
-    currentUser,
+    user,
     loading,
     login,
     logout,
     register,
-    isAuthenticated: !!currentUser
+    isAuthenticated: !!user
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}

@@ -1,73 +1,40 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-function Newsletter() {
+export const Newsletter = () => {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [status, setStatus] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Simple email validation
-    if (!/\S+@\S+\.\S+/.test(email)) {
-      setMessage('Please enter a valid email address');
-      setStatus('error');
-      return;
-    }
-
-    try {
-      setStatus('loading');
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMessage('Thank you for subscribing to our newsletter!');
-      setStatus('success');
-      setEmail('');
-    } catch (error) {
-      setMessage('Something went wrong. Please try again.');
-      setStatus('error');
-    }
+    // Handle newsletter subscription
+    setEmail('');
   };
 
   return (
-    <section className="bg-gray-100 rounded-xl p-8 md:p-12">
-      <div className="max-w-xl mx-auto text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
-        <p className="text-gray-600 mb-6">
-          Stay updated on our latest collections, exclusive offers, and style tips.
-        </p>
-        
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-          <div className="flex flex-col sm:flex-row gap-3">
+    <section className="py-16 bg-gray-900 text-white">
+      <div className="container mx-auto px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4">Join Our Newsletter</h2>
+          <p className="text-gray-400 mb-8">
+            Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.
+          </p>
+          <form onSubmit={handleSubmit} className="flex gap-4 max-w-md mx-auto">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
-              className="flex-grow px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
               required
             />
             <button
               type="submit"
-              className="btn-primary whitespace-nowrap"
-              disabled={status === 'loading'}
+              className="px-6 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
             >
-              {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+              Subscribe
             </button>
-          </div>
-          
-          {message && (
-            <p className={`mt-3 text-sm ${status === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-              {message}
-            </p>
-          )}
-        </form>
-        
-        <p className="mt-4 text-xs text-gray-500">
-          By subscribing, you agree to our privacy policy and consent to receive updates from our company.
-        </p>
+          </form>
+        </div>
       </div>
     </section>
   );
-}
-
-export default Newsletter;
+};
