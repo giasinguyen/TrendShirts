@@ -1,0 +1,12 @@
+:root {
+  --primary-color: #ff6347; /* Tomato */
+  --secondary-color: #4caf50; /* Green */
+  --background-color: #f4f4f4; /* Light Gray */
+  --text-color: #333; /* Dark Gray */
+  --font-family: 'Arial', sans-serif;
+  --font-size-base: 16px;
+  --font-size-large: 20px;
+  --font-size-small: 14px;
+  --border-radius: 4px;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

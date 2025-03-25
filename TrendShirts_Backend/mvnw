@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Maven wrapper script
+
+MAVEN_VERSION=3.8.6
+MVNW_HOME="$HOME/.m2/wrapper/dists/apache-maven-$MAVEN_VERSION-bin"
+MVNW_CMD="$MVNW_HOME/mvnw"
+
+if [ ! -f "$MVNW_CMD" ]; then
+  echo "Downloading Maven wrapper..."
+  mkdir -p "$MVNW_HOME"
+  curl -L -o "$MVNW_CMD" "https://repo.maven.apache.org/maven2/org/apache/maven/wrapper/maven-wrapper/0.5.6/maven-wrapper-0.5.6.jar"
+  chmod +x "$MVNW_CMD"
+fi
+
+exec "$MVNW_CMD" "$@"
