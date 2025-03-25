@@ -1,77 +1,70 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { authService } from '../services/api';
-// Create the auth context
-const AuthContext = createContext(null);
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { getCurrentUser } from '../services/authService';
 
-// Hook for child components to get the auth object
-export const useAuth = () => useContext(AuthContext);
+// Tạo context và export named để component có thể import { AuthContext }
+export const AuthContext = createContext();
 
-// Provider component
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+// Custom hook để sử dụng AuthContext
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export const AuthProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check if user is already logged in
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // You might want to validate token or get user data
-      // For now, we'll just set a simple user object
-      setUser({ isLoggedIn: true });
-    }
-    setLoading(false);
+    const loadUser = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        try {
+          const userData = await getCurrentUser();
+          setCurrentUser(userData);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error('Failed to load user', error);
+          localStorage.removeItem('token');
+        }
+      }
+      
+      setLoading(false);
+    };
+    
+    loadUser();
   }, []);
 
-  // Login function
-  const login = async (email, password) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await authService.login(email, password);
-      const { token } = response.data;
-      
-      localStorage.setItem('token', token);
-      setUser({ isLoggedIn: true });
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
-      return false;
-    } finally {
-      setLoading(false);
-    }
+  const login = (userData, token) => {
+    localStorage.setItem('token', token);
+    setCurrentUser(userData);
+    setIsAuthenticated(true);
   };
 
-  // Register function
-  const register = async (userData) => {
-    setLoading(true);
-    setError(null);
-    try {
-      await authService.register(userData);
-      return true;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Logout function
   const logout = () => {
-    authService.logout();
-    setUser(null);
+    localStorage.removeItem('token');
+    setCurrentUser(null);
+    setIsAuthenticated(false);
   };
 
-  const value = {
-    user,
-    loading,
-    error,
-    login,
-    logout,
-    register,
-    isAuthenticated: !!user
-  };
+  return (
+    <AuthContext.Provider 
+      value={{ 
+        user: currentUser, // Đổi tên từ currentUser thành user cho dễ sử dụng
+        isAuthenticated, 
+        loading, 
+        login, 
+        logout 
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+// Export default để hỗ trợ import AuthContext from '...'
+export default AuthContext;

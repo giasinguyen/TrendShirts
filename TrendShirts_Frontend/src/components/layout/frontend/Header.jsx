@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Search, User } from 'lucide-react';
 
-export const Header = () => {
+const Header = () => {
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4">
@@ -32,3 +32,5 @@ export const Header = () => {
     </header>
   );
 };
+
+export default Header;
