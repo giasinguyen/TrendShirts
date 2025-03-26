@@ -13,6 +13,8 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   // Lấy giỏ hàng từ localStorage (nếu có)
+  const [cart, setCart] = useState([]); // Khởi tạo cart là mảng rỗng
+
   const [items, setItems] = useState(() => {
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];

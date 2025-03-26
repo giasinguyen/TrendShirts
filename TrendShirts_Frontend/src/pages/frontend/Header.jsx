@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, User, ShoppingBag } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 // Sửa đường dẫn import context
-import { useAuth } from '../../contexts/AuthContext';
-import { useCart } from '../../contexts/CartContext';
-import { useCategory } from '../../contexts/CategoryContext';
+import { useAuth } from "../../contexts/AuthContext";
+import { useCart } from "../../contexts/CartContext";
+import { useCategory } from "../../contexts/CategoryContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const { isAuthenticated, user, logout } = useAuth();
   const { itemCount } = useCart();
@@ -21,9 +21,9 @@ const Header = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -31,7 +31,7 @@ const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
+      setSearchQuery("");
       setIsMenuOpen(false);
     }
   };
@@ -39,11 +39,17 @@ const Header = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+  <nav>
+    <Link to="/">Home</Link>
+    <Link to="/products">Products</Link>
+    <Link to="/about">About</Link>
+    <Link to="/contact">Contact</Link>
+  </nav>;
 
   return (
-    <header 
+    <header
       className={`fixed left-0 right-0 top-0 z-50 bg-white transition-all duration-300 ${
-        isScrolled ? 'shadow-md' : ''
+        isScrolled ? "shadow-md" : ""
       }`}
     >
       <div className="container mx-auto px-4">
@@ -64,12 +70,15 @@ const Header = () => {
                 </Link>
               </li>
               <li className="relative group">
-                <Link to="/products" className="text-gray-600 hover:text-gray-900">
+                <Link
+                  to="/products"
+                  className="text-gray-600 hover:text-gray-900"
+                >
                   Products
                 </Link>
                 {categories && categories.length > 0 && (
                   <div className="absolute left-0 mt-2 hidden w-48 rounded-md bg-white py-2 shadow-lg group-hover:block">
-                    {categories.map(category => (
+                    {categories.map((category) => (
                       <Link
                         key={category.id}
                         to={`/products?category=${category.slug}`}
@@ -87,7 +96,10 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-600 hover:text-gray-900">
+                <Link
+                  to="/contact"
+                  className="text-gray-600 hover:text-gray-900"
+                >
                   Contact
                 </Link>
               </li>
@@ -127,7 +139,7 @@ const Header = () => {
                   </button>
                   <div className="absolute right-0 mt-2 hidden w-48 rounded-md bg-white py-2 shadow-lg group-hover:block">
                     <div className="border-b border-gray-100 px-4 py-2 text-sm font-medium">
-                      {user?.name || 'User'}
+                      {user?.name || "User"}
                     </div>
                     <Link
                       to="/account"
@@ -141,7 +153,7 @@ const Header = () => {
                     >
                       My Orders
                     </Link>
-                    {user?.roles?.includes('ADMIN') && (
+                    {user?.roles?.includes("ADMIN") && (
                       <Link
                         to="/admin"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -165,7 +177,10 @@ const Header = () => {
             </div>
 
             {/* Shopping Cart */}
-            <Link to="/cart" className="relative text-gray-600 hover:text-gray-900">
+            <Link
+              to="/cart"
+              className="relative text-gray-600 hover:text-gray-900"
+            >
               <ShoppingBag className="h-6 w-6" />
               {itemCount > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
@@ -228,7 +243,7 @@ const Header = () => {
             </Link>
             {categories && categories.length > 0 && (
               <div className="ml-4 space-y-1 border-l border-gray-200 pl-2">
-                {categories.map(category => (
+                {categories.map((category) => (
                   <Link
                     key={category.id}
                     to={`/products?category=${category.slug}`}
@@ -259,7 +274,7 @@ const Header = () => {
               {isAuthenticated ? (
                 <>
                   <div className="px-3 py-2 text-sm font-medium text-gray-500">
-                    Signed in as {user?.name || 'User'}
+                    Signed in as {user?.name || "User"}
                   </div>
                   <Link
                     to="/account"
@@ -275,7 +290,7 @@ const Header = () => {
                   >
                     My Orders
                   </Link>
-                  {user?.roles?.includes('ADMIN') && (
+                  {user?.roles?.includes("ADMIN") && (
                     <Link
                       to="/admin"
                       className="block rounded-md px-3 py-2 text-base font-medium text-gray-900 hover:bg-gray-100"
