@@ -1,27 +1,23 @@
 package fit.iuh.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
+import java.util.Set;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class LoginResponseDTO {
     private String token;
     private String tokenType = "Bearer";
     private Long id;
     private String email;
     private String name;
-    private List<String> roles;
+    private Set<String> roles;
 
     public LoginResponseDTO(String token) {
         this.token = token;
     }
 
-    public LoginResponseDTO(String token, Long id, String email, String name, List<String> roles) {
+    // Constructor đầy đủ
+    public LoginResponseDTO(String token, Long id, String email, String name, Set<String> roles) {
         this.token = token;
         this.id = id;
         this.email = email;

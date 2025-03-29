@@ -6,13 +6,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:3000", "http://localhost:5173") // Thêm domain của frontend
+        registry.addMapping("/**")
+                .allowedOrigins("*") // Cho phép tất cả origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(false); // Tắt credentials để tránh lỗi với wildcard origin
     }
 }

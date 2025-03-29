@@ -20,6 +20,7 @@ public class UserDTO {
     private Set<AddressDTO> addresses = new HashSet<>();
     private Set<String> roles = new HashSet<>();
 
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
