@@ -2,8 +2,6 @@
 
 A modern e-commerce platform for fashion retail with responsive design and comprehensive management features.
 
-![TrendShirts Logo](https://via.placeholder.com/150x50?text=TrendShirts)
-
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
