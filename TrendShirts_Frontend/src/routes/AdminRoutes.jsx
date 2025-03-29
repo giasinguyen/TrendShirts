@@ -1,5 +1,7 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+
 import AdminLayout from '../components/layout/admin/AdminLayout';
 
 import Dashboard from '../pages/admin/Dashboard';
@@ -11,6 +13,33 @@ import OrderList from '../pages/admin/orders/OrderList';
 import OrderDetails from '../pages/admin/orders/OrderDetails';
 
 const AdminRoutes = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!loading) {
+      console.log("AdminRoutes - Auth state:", { user });
+      
+      if (!user) {
+        console.warn("No user found, redirecting to login");
+        navigate('/login?redirect=admin');
+      } else if (!user.roles || !user.roles.includes('ROLE_ADMIN')) {
+        console.warn("User is not admin. Roles:", user.roles);
+        navigate('/login?redirect=admin&error=notadmin');
+      } else {
+        console.log("Admin authentication successful, rendering dashboard");
+      }
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading admin dashboard...</div>;
+  }
+
+  if (!user || !user.roles || !user.roles.includes('ROLE_ADMIN')) {
+    return null;
+  }
+
   return (
     <AdminLayout>
       <Routes>

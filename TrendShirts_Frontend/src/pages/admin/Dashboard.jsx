@@ -10,7 +10,6 @@ import {
   Clock, 
   CheckCircle 
 } from 'lucide-react';
-import { getOrderStatistics } from '../../services/orderService';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);

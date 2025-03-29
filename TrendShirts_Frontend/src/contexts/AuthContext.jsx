@@ -1,70 +1,75 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getCurrentUser } from '../services/authService';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { login as loginService, logout as logoutService, getCurrentUser, register as registerService } from '../services/authService';
 
-// Tạo context và export named để component có thể import { AuthContext }
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-// Custom hook để sử dụng AuthContext
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem('token');
-      
-      if (token) {
-        try {
-          const userData = await getCurrentUser();
-          setCurrentUser(userData);
-          setIsAuthenticated(true);
-        } catch (error) {
-          console.error('Failed to load user', error);
-          localStorage.removeItem('token');
+    const initAuth = async () => {
+      setLoading(true);
+      try {
+        const currentUser = getCurrentUser();
+        console.log("Current user from storage:", currentUser);
+        if (currentUser) {
+          setUser(currentUser);
         }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
     };
     
-    loadUser();
+    initAuth();
   }, []);
 
-  const login = (userData, token) => {
-    localStorage.setItem('token', token);
-    setCurrentUser(userData);
-    setIsAuthenticated(true);
+  const login = async (credentials) => {
+    try {
+      console.log("Login attempt with:", credentials);
+      const data = await loginService(credentials);
+      console.log("Login response:", data);
+      
+      // Kiểm tra token và roles
+      if (!data.token) {
+        console.error("No token in response");
+        return;
+      }
+      
+      if (!data.roles || data.roles.length === 0) {
+        console.warn("No roles in response:", data);
+      }
+      
+      setUser(data);
+      return data;
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setCurrentUser(null);
-    setIsAuthenticated(false);
+    logoutService();
+    setUser(null);
+  };
+
+  const register = async (userData) => {
+    try {
+      return await registerService(userData);
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    }
   };
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user: currentUser, // Đổi tên từ currentUser thành user cho dễ sử dụng
-        isAuthenticated, 
-        loading, 
-        login, 
-        logout 
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
 };
-
-// Export default để hỗ trợ import AuthContext from '...'
-export default AuthContext;
